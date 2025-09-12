@@ -86,11 +86,16 @@ def analyze_graph(g: nx.Graph) -> dict:
     components = list(nx.connected_components(g))
     analysis["num_components"] = len(components)
     # Cycle Detection
+    analysis["cycle_detection"] = nx.find_cycle(g)
     # Isolated Nodes
     analysis["isolated_nodes"] = list(nx.isolates(g))
     # Graph Density
     analysis["density"] = nx.density(g)
     # Average shortest path length
+    if nx.is_connected(g):
+        analysis["average_shortest_path"] = nx.average_shortest_path_length(g)
+    else:
+        analysis["average_shortest_path"] = None
     return analysis
 
 # Print Graph
