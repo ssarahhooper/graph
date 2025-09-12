@@ -105,7 +105,14 @@ def analyze_graph(g: nx.Graph) -> dict:
 # command line
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser("Graph analysis")
+    parser.add_argument("--input", type=str, help="input file")
+    parser.add_argument("--output", type=str, help="output file")
+    parser.add_argument("--create_random_graph", nargs=3, help="create random graph")
+    parser.add_argument("--multi_BFS", nargs="+", help="bfs graph")
+    parser.add_argument("--analyze", action="store_true", help="analyze graph")
+    parser.add_argument("--plot", action="store_true", help="plot graph")
+
 
 
 if __name__ == "__main__":
