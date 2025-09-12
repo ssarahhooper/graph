@@ -62,17 +62,49 @@ def bfs(g: nx.Graph, root: str) -> nx.DiGraph:
     return bfs_tree
 
 
-g = create_random_graph(10, 2, 42)  # 10 nodes, c=2, seed=42
+def multi_bfs(g: nx.Graph, roots: list[str]) -> dict[str, nx.DiGraph]:
+    return {r: bfs(g, r) for r in roots}
+
+g = create_random_graph(10, 2, 2)  # 10 nodes, c=2, seed=42
 print("Number of nodes:", g.number_of_nodes())
 print("Number of edges:", g.number_of_edges())
 print("Nodes:", g.nodes())
 print("Edges:", g.edges())
+
+root = "0"
+bfs_tree = bfs(g, root)
+
+print("Nodes in BFS tree:", list(bfs_tree.nodes()))
+print("Edges in BFS tree:", list(bfs_tree.edges()))
+
+
+# anaylze
+
+def analyze_graph(g: nx.Graph) -> dict:
+    analysis = {}
+    # Connected Components
+    components = list(nx.connected_components(g))
+    analysis["num_components"] = len(components)
+    # Cycle Detection
+    # Isolated Nodes
+    analysis["isolated_nodes"] = list(nx.isolates(g))
+    # Graph Density
+    analysis["density"] = nx.density(g)
+    # Average shortest path length
+    return analysis
 
 # Print Graph
 
 
 
 # command line
+
+def main():
+    parser = argparse.ArgumentParser()
+
+
+if __name__ == "__main__":
+    main()
 
 
 
