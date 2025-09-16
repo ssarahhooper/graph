@@ -86,29 +86,32 @@ def analyze_graph(g: nx.Graph) -> dict:
 # Plot Graph
 def plot_graph(g: nx.Graph, bfs_trees: dict[str, nx.DiGraph]= None):
     pos = nx.spring_layout(g, seed=42)
-    nx.draw(
-        g,
-        pos=pos,
-        with_labels=True,
-        node_color="lightblue",
-        edge_color="grey",
-        node_size=500,
-        font_size=10,
-    )
-    if bfs_trees:
-        colors = ["red", "green", "orange", "purple"]
-        for i, (root, tree) in enumerate(bfs_trees.items()):
-            edges = list(nx.edges(tree))
-            nx.draw_networkx_edges(
-                g,
-                pos=pos,
-                edgelist=edges,
-                edge_color=colors[i % len(colors)],
-                width=2,
-                label=f"BFS from {root}"
-            )
-    plt.legend()
-    plt.show()
+    colors = ["red", "green", "orange", "purple"]
+    # will make a new graph for each bfs each with a different color
+    for i, (root, tree) in enumerate(bfs_trees.items()):
+        nx.draw(
+            g,
+            # keep edges in the same position as the original edges
+            pos=pos,
+            with_labels=True,
+            node_color="lightblue",
+            edge_color="grey",
+            node_size=500,
+            font_size=10,
+        )
+        edges = list(nx.edges(tree))
+        nx.draw_networkx_edges(
+            g,
+            # keep edges in the same position
+            pos=pos,
+            edgelist=edges,
+            # just incase there's more than 4 inputs
+            edge_color=colors[i % len(colors)],
+            width=2,
+            label=f"BFS from {root}"
+        )
+        plt.legend()
+        plt.show()
 
 
 # command line
