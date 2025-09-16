@@ -11,7 +11,7 @@ import queue
 
 def read_gml(file: str) -> nx.Graph:
     g = nx.read_gml(file)
-    # ensure all nodes are strings
+    # make sure all nodes are strings
     mapping = {u: str(u) for u in g.nodes}
     g = nx.relabel_nodes(g, mapping)
     return g
@@ -22,7 +22,7 @@ def write_gml(g: nx.Graph, file: str) -> None:
 
 
 def create_random_graph(n: int, c: float, seed: int) -> nx.Graph:
-    # ensure n is positive
+    # make sure n is positive
     if n <= 0:
         raise ValueError("n must be greater than zero")
     # calculate p
@@ -35,12 +35,7 @@ def create_random_graph(n: int, c: float, seed: int) -> nx.Graph:
     # return
     return g
 
-
-# Algorithms
-# BFS
-"HELPER FUNCTION: create a bfs from g using directed graph so parent and child"
-"relationships are conserved"
-
+# Helper function for multi_bfs
 
 def bfs(g: nx.Graph, root: str) -> nx.DiGraph:
     visited = set([root])
@@ -61,21 +56,9 @@ def bfs(g: nx.Graph, root: str) -> nx.DiGraph:
 
     return bfs_tree
 
-
+# multi_BFS
 def multi_bfs(g: nx.Graph, roots: list[str]) -> dict[str, nx.DiGraph]:
     return {r: bfs(g, r) for r in roots}
-
-g = create_random_graph(10, 2, 2)  # 10 nodes, c=2, seed=42
-print("Number of nodes:", g.number_of_nodes())
-print("Number of edges:", g.number_of_edges())
-print("Nodes:", g.nodes())
-print("Edges:", g.edges())
-
-root = "0"
-bfs_tree = bfs(g, root)
-
-print("Nodes in BFS tree:", list(bfs_tree.nodes()))
-print("Edges in BFS tree:", list(bfs_tree.edges()))
 
 
 # anaylze
@@ -98,8 +81,14 @@ def analyze_graph(g: nx.Graph) -> dict:
         analysis["average_shortest_path"] = None
     return analysis
 
-# Print Graph
 
+# Plot Graph
+def plot_graph(g: nx.Graph, bfs_trees: dict[str, nx.DiGraph]= None):
+    pos = nx.spring_layout(g, seed=42)
+    nx.draw(g, with_labels=True)
+    if bfs_trees:
+        colors = ["red", "green", "blue"]
+    plt.show()
 
 
 # command line
@@ -113,6 +102,40 @@ def main():
     parser.add_argument("--analyze", action="store_true", help="analyze graph")
     parser.add_argument("--plot", action="store_true", help="plot graph")
 
+    args = parser.parse_args()
+
+    if args.create_random_graph:
+        # error handling
+        # if incorrect amount of arguments
+        if len(args.create_random_graph) != 3:
+            print("ERROR: --create_random_graph must have 3 arguments: n, c, and seed")
+        try:
+            n, c, seed = (int(args.create_random_graph[0]),
+                          float(args.create_random_graph[1]), int(args.create_random_graph[2]))
+            g = create_random_graph(n, c, seed)
+        # error handling: incorrect type
+        except ValueError:
+            print("ERROR: n and seed must be integers, c must be float")
+            return
+    elif args.input:
+        g = read_gml(args.input)
+    else:
+        print("Error: Must provide input file or create random graph")
+        return
+
+    bfs_trees = None
+    if args.multi_BFS:
+        bfs_trees = multi_bfs(g, args.multi_BFS)
+
+    if args.analyze:
+        analysis = analyze_graph(g)
+        print(json.dumps(analysis, indent=2))
+
+    if args.plot:
+        plot_graph(g, bfs_trees)
+
+    if args.output:
+        write_gml(g, args.output)
 
 
 if __name__ == "__main__":
