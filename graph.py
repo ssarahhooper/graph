@@ -56,6 +56,7 @@ def bfs(g: nx.Graph, root: str) -> nx.DiGraph:
 
     return bfs_tree
 
+
 # multi_BFS
 def multi_bfs(g: nx.Graph, roots: list[str]) -> dict[str, nx.DiGraph]:
     return {r: bfs(g, r) for r in roots}
@@ -85,9 +86,28 @@ def analyze_graph(g: nx.Graph) -> dict:
 # Plot Graph
 def plot_graph(g: nx.Graph, bfs_trees: dict[str, nx.DiGraph]= None):
     pos = nx.spring_layout(g, seed=42)
-    nx.draw(g, with_labels=True)
+    nx.draw(
+        g,
+        pos=pos,
+        with_labels=True,
+        node_color="lightblue",
+        edge_color="grey",
+        node_size=500,
+        font_size=10,
+    )
     if bfs_trees:
-        colors = ["red", "green", "blue"]
+        colors = ["red", "green", "orange", "purple"]
+        for i, (root, tree) in enumerate(bfs_trees.items()):
+            edges = list(nx.edges(tree))
+            nx.draw_networkx_edges(
+                g,
+                pos=pos,
+                edgelist=edges,
+                edge_color=colors[i % len(colors)],
+                width=2,
+                label=f"BFS from {root}"
+            )
+    plt.legend()
     plt.show()
 
 
@@ -105,18 +125,10 @@ def main():
     args = parser.parse_args()
 
     if args.create_random_graph:
-        # error handling
-        # if incorrect amount of arguments
-        if len(args.create_random_graph) != 3:
-            print("ERROR: --create_random_graph must have 3 arguments: n, c, and seed")
-        try:
-            n, c, seed = (int(args.create_random_graph[0]),
-                          float(args.create_random_graph[1]), int(args.create_random_graph[2]))
-            g = create_random_graph(n, c, seed)
-        # error handling: incorrect type
-        except ValueError:
-            print("ERROR: n and seed must be integers, c must be float")
-            return
+        # error handling for # of arguments in args=3
+        n, c, seed = (int(args.create_random_graph[0]),
+                      float(args.create_random_graph[1]), int(args.create_random_graph[2]))
+        g = create_random_graph(n, c, seed)
     elif args.input:
         g = read_gml(args.input)
     else:
