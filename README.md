@@ -36,8 +36,35 @@ components, cycles, isolated nodes, graph density, and average shortest path
 
 ## Examples
 
-
+`python ./graph.py --input "output_graph.gml" --multi_BFS 3 6 --analyze --plot`
+* given this command, the expected terminal output should look like this:
+* {
+  "num_components": 1,
+  "cycle_detection": [
+    [
+      "0",
+      "1"
+    ],
+    [
+      "1",
+      "2"
+    ],
+    [
+      "2",
+      "7"
+    ],
+    [
+      "7",
+      "0"
+    ]
+  ],
+  "isolated_nodes": [],
+  "density": 0.37777777777777777,
+  "average_shortest_path": 1.7555555555555555
+}
+* Two graphs will be shown, one for each root.
 ## Name and ID
 * Sarah Hooper: 032031049
 * I did not realize we were supposed to be in pairs until it was too late.
+
 
